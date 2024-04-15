@@ -1,26 +1,45 @@
+import { useState } from "react";
 import "./App.css";
-import Button from "./components/Button";
+import { useEffect } from "react";
+import Form from "./components/Form";
 
 function App() {
-  const colors = ["red", "green", "blue", "yellow", "lightblue", "orange"];
+  const [list, setList] = useState([]);
 
-  const obj = [
-    { color: "red", height: 100, width: 200 },
-    { color: "green", height: 300, width: 300 },
-    { color: "blue", height: 200, width: 200 },
-    { color: "orange", height: 500, width: 222 },
-    { color: "lightblue", height: 300, width: 233 },
-  ];
-
-  const displayButton = (item) => <Button {...item} />;
+  useEffect(() => {
+    fetch("https://jsonplaceholder.typicode.com/users")
+      .then((result) => {
+        return result.json();
+      })
+      .then((data) => {
+        setList(data);
+        console.log(data[0]);
+      });
+  }, []);
 
   return (
     <>
-      <h1>Vite + React</h1>
       <div className="card">
-        {obj.map((item) => (
-          <Button {...item} key={item.color} />
-        ))}
+        <Form setList={setList} list={list} />
+
+        <table>
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Phone</th>
+            </tr>
+          </thead>
+          <tbody>
+            {list?.map((item) => (
+              <tr key={item.id}>
+                <td>{item.name}</td>
+                <td>{item.email}</td>
+                <td>{item.phone}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
     </>
   );
